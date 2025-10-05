@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">Welcome to Inventory Management System</h1>
+        <p class="lead">Manage your products, locations, and track inventory movements efficiently.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Products</h5>
+                <p class="card-text">Add and manage products</p>
+                <a href="{{ url_for('products') }}" class="btn btn-primary">Manage Products</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Locations</h5>
+                <p class="card-text">Add and manage warehouses</p>
+                <a href="{{ url_for('locations') }}" class="btn btn-primary">Manage Locations</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Movements</h5>
+                <p class="card-text">Track product movements</p>
+                <a href="{{ url_for('movements') }}" class="btn btn-primary">View Movements</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Balance Report</h5>
+                <p class="card-text">View current stock levels</p>
+                <a href="{{ url_for('report') }}" class="btn btn-primary">View Report</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Movements - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Product Movements</h2>
+    <a href="{{ url_for('add_movement') }}" class="btn btn-success">Add New Movement</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Product</th>
+                <th>From Location</th>
+                <th>To Location</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if movements %}
+                {% for movement in movements %}
+                <tr>
+                    <td>{{ movement.movement_id }}</td>
+                    <td>{{ movement.timestamp }}</td>
+                    <td>{{ movement.product_name }}</td>
+                    <td>{{ movement.from_location_name }}</td>
+                    <td>{{ movement.to_location_name }}</td>
+                    <td>{{ movement.qty }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">No movements found. Add your first movement!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

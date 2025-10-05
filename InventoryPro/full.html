@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navbar h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar h1::before {
+            content: "📦";
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .hero-section {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            background-image: url('attached_assets/stock_images/warehouse_inventory__c6a2dac7.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .card h3 {
+            color: #1e3c72;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            box-shadow: 0 4px 12px rgba(56, 239, 125, 0.4);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #636363 0%, #a2ab58 100%);
+            box-shadow: 0 4px 12px rgba(162, 171, 88, 0.4);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(162, 171, 88, 0.6);
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #1e3c72;
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        table thead {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        table th,
+        table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        table tbody tr {
+            transition: all 0.3s;
+        }
+
+        table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: scale(1.01);
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 1.05rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert::before {
+            font-size: 1.5rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-success::before {
+            content: "✅";
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-error::before {
+            content: "❌";
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .alert-info::before {
+            content: "ℹ️";
+        }
+
+        .badge {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(56, 239, 125, 0.3);
+        }
+
+        .badge-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(235, 51, 73, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .empty-state::before {
+            content: "📭";
+            display: block;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .image-section {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .image-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover {
+            transform: scale(1.05);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h4 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+
+            .navbar h1 {
+                font-size: 1.3rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero-section {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>Inventory Management System</h1>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showSection('home')">🏠 Home</a></li>
+                <li><a href="#" onclick="showSection('products')">📦 Products</a></li>
+                <li><a href="#" onclick="showSection('locations')">📍 Locations</a></li>
+                <li><a href="#" onclick="showSection('movements')">🔄 Movements</a></li>
+                <li><a href="#" onclick="showSection('report')">📊 Report</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="alert-container"></div>
+
+        <section id="home" class="section active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2>Welcome to Inventory Management System</h2>
+                    <p style="color: #6c757d; margin-bottom: 0; font-size: 1.1rem;">Manage your products, locations, and track inventory movements efficiently with our modern platform.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4 id="total-products">0</h4>
+                    <p>Total Products</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <h4 id="total-locations">0</h4>
+                    <p>Total Locations</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">
+                    <h4 id="total-movements">0</h4>
+                    <p>Total Movements</p>
+                </div>
+            </div>
+            
+            <div class="dashboard">
+                <div class="card">
+                    <span class="card-icon">📦</span>
+                    <h3>Products</h3>
+                    <p>Add and manage products in your inventory system</p>
+                    <button class="btn" onclick="showSection('products')">Manage Products</button>
+                </div>
+                
+                <div class="card">
+                    <span class="card-icon">📍</span>
+                    <h3>Locations</h3>
+                    <p>Add and manage warehouse locations</p>
+                    <button class="btn" onclick="showSection('locations')">Manage Locations</button>
+                </div>
+                
+                <div class="card">
+                    <span class="card-icon">🔄</span>
+                    <h3>Movements</h3>
+                    <p>Track product movements and transfers</p>
+                    <button class="btn" onclick="showSection('movements')">View Movements</button>
+                </div>
+                
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3>Balance Report</h3>
+                    <p>View current stock levels and analytics</p>
+                    <button class="btn" onclick="showSection('report')">View Report</button>
+                </div>
+            </div>
+
+            <div class="image-section">
+                <div class="image-card">
+                    <img src="attached_assets/stock_images/modern_warehouse_man_ee69c638.jpg" alt="Modern Warehouse">
+                </div>
+                <div class="image-card">
+                    <img src="attached_assets/stock_images/logistics_shipping_p_25174896.jpg" alt="Logistics">
+                </div>
+                <div class="image-card">
+                    <img src="attached_assets/stock_images/data_analytics_dashb_21f370b6.jpg" alt="Analytics">
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="section">
+            <div class="section-header">
+                <h2>Products</h2>
+                <button class="btn btn-success" onclick="showSection('add-product')">➕ Add New Product</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="products-table"></tbody>
+            </table>
+        </section>
+
+        <section id="add-product" class="section">
+            <h2>Add New Product</h2>
+            <form onsubmit="addProduct(event)">
+                <div class="form-group">
+                    <label for="product_id">📋 Product ID</label>
+                    <input type="text" id="product_id" required placeholder="e.g., PROD001">
+                    <small>Unique identifier for the product</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product_name">📦 Product Name</label>
+                    <input type="text" id="product_name" required placeholder="e.g., Product A">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product_description">📝 Description</label>
+                    <textarea id="product_description" rows="3" placeholder="Optional product description"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn">Add Product</button>
+                    <button type="button" class="btn btn-secondary" onclick="showSection('products')">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="locations" class="section">
+            <div class="section-header">
+                <h2>Locations</h2>
+                <button class="btn btn-success" onclick="showSection('add-location')">➕ Add New Location</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Location ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody id="locations-table"></tbody>
+            </table>
+        </section>
+
+        <section id="add-location" class="section">
+            <h2>Add New Location</h2>
+            <form onsubmit="addLocation(event)">
+                <div class="form-group">
+                    <label for="location_id">🏷️ Location ID</label>
+                    <input type="text" id="location_id" required placeholder="e.g., LOC001">
+                    <small>Unique identifier for the location</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location_name">📍 Location Name</label>
+                    <input type="text" id="location_name" required placeholder="e.g., Warehouse A">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location_address">🏢 Address</label>
+                    <textarea id="location_address" rows="3" placeholder="Optional address"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn">Add Location</button>
+                    <button type="button" class="btn btn-secondary" onclick="showSection('locations')">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="movements" class="section">
+            <div class="section-header">
+                <h2>Product Movements</h2>
+                <button class="btn btn-success" onclick="showSection('add-movement')">➕ Add New Movement</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Timestamp</th>
+                        <th>Product</th>
+                        <th>From Location</th>
+                        <th>To Location</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody id="movements-table"></tbody>
+            </table>
+        </section>
+
+        <section id="add-movement" class="section">
+            <h2>Add Product Movement</h2>
+            
+            <div class="alert alert-info">
+                <div>
+                    <strong>Movement Types:</strong>
+                    <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+                        <li><strong>Inward:</strong> Leave "From Location" empty and select "To Location"</li>
+                        <li><strong>Outward:</strong> Select "From Location" and leave "To Location" empty</li>
+                        <li><strong>Transfer:</strong> Select both "From Location" and "To Location"</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <form onsubmit="addMovement(event)">
+                <div class="form-group">
+                    <label for="movement_product">📦 Product</label>
+                    <select id="movement_product" required>
+                        <option value="">Select a product</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="movement_from">📍 From Location (Optional)</label>
+                    <select id="movement_from">
+                        <option value="">None (New Product)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="movement_to">📍 To Location (Optional)</label>
+                    <select id="movement_to">
+                        <option value="">None (Sold/Removed)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="movement_qty">🔢 Quantity</label>
+                    <input type="number" id="movement_qty" min="1" required placeholder="Enter quantity">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn">Add Movement</button>
+                    <button type="button" class="btn btn-secondary" onclick="showSection('movements')">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="report" class="section">
+            <h2>Balance Report - Current Stock Levels</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Location</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody id="report-table"></tbody>
+            </table>
+            
+            <div class="alert alert-info" style="margin-top: 2rem;">
+                <div>
+                    <strong>Note:</strong> This report shows the current balance of each product at each location based on all recorded movements.
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let locations = JSON.parse(localStorage.getItem('locations')) || [];
+        let movements = JSON.parse(localStorage.getItem('movements')) || [];
+
+        function updateStats() {
+            document.getElementById('total-products').textContent = products.length;
+            document.getElementById('total-locations').textContent = locations.length;
+            document.getElementById('total-movements').textContent = movements.length;
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            alert.appendChild(messageDiv);
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'home') {
+                updateStats();
+            } else if (sectionId === 'products') {
+                renderProducts();
+            } else if (sectionId === 'locations') {
+                renderLocations();
+            } else if (sectionId === 'movements') {
+                renderMovements();
+            } else if (sectionId === 'report') {
+                renderReport();
+            } else if (sectionId === 'add-movement') {
+                populateMovementForm();
+            }
+        }
+
+        function addProduct(event) {
+            event.preventDefault();
+            
+            const productId = document.getElementById('product_id').value.trim();
+            const name = document.getElementById('product_name').value.trim();
+            const description = document.getElementById('product_description').value.trim();
+            
+            if (products.some(p => p.product_id === productId)) {
+                showAlert('Product ID already exists!', 'error');
+                return;
+            }
+            
+            products.push({
+                product_id: productId,
+                name: name,
+                description: description
+            });
+            
+            localStorage.setItem('products', JSON.stringify(products));
+            showAlert('Product added successfully!');
+            event.target.reset();
+            showSection('products');
+        }
+
+        function addLocation(event) {
+            event.preventDefault();
+            
+            const locationId = document.getElementById('location_id').value.trim();
+            const name = document.getElementById('location_name').value.trim();
+            const address = document.getElementById('location_address').value.trim();
+            
+            if (locations.some(l => l.location_id === locationId)) {
+                showAlert('Location ID already exists!', 'error');
+                return;
+            }
+            
+            locations.push({
+                location_id: locationId,
+                name: name,
+                address: address
+            });
+            
+            localStorage.setItem('locations', JSON.stringify(locations));
+            showAlert('Location added successfully!');
+            event.target.reset();
+            showSection('locations');
+        }
+
+        function addMovement(event) {
+            event.preventDefault();
+            
+            const productId = document.getElementById('movement_product').value;
+            const fromLocation = document.getElementById('movement_from').value || null;
+            const toLocation = document.getElementById('movement_to').value || null;
+            const qty = parseInt(document.getElementById('movement_qty').value);
+            
+            if (!fromLocation && !toLocation) {
+                showAlert('At least one location (From or To) must be selected!', 'error');
+                return;
+            }
+            
+            const movementId = movements.length > 0 ? Math.max(...movements.map(m => m.movement_id)) + 1 : 1;
+            
+            movements.push({
+                movement_id: movementId,
+                timestamp: new Date().toLocaleString(),
+                product_id: productId,
+                from_location: fromLocation,
+                to_location: toLocation,
+                qty: qty
+            });
+            
+            localStorage.setItem('movements', JSON.stringify(movements));
+            showAlert('Movement added successfully!');
+            event.target.reset();
+            showSection('movements');
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('products-table');
+            
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No products found. Add your first product!</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = products.map(product => `
+                <tr>
+                    <td><strong>${product.product_id}</strong></td>
+                    <td>${product.name}</td>
+                    <td>${product.description || '-'}</td>
+                    <td><button class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">✏️ Edit</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderLocations() {
+            const tbody = document.getElementById('locations-table');
+            
+            if (locations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-state">No locations found. Add your first location!</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = locations.map(location => `
+                <tr>
+                    <td><strong>${location.location_id}</strong></td>
+                    <td>${location.name}</td>
+                    <td>${location.address || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderMovements() {
+            const tbody = document.getElementById('movements-table');
+            
+            if (movements.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No movements found. Add your first movement!</td></tr>';
+                return;
+            }
+            
+            const reversedMovements = [...movements].reverse();
+            
+            tbody.innerHTML = reversedMovements.map(movement => {
+                const product = products.find(p => p.product_id === movement.product_id);
+                const fromLoc = movement.from_location ? locations.find(l => l.location_id === movement.from_location) : null;
+                const toLoc = movement.to_location ? locations.find(l => l.location_id === movement.to_location) : null;
+                
+                return `
+                    <tr>
+                        <td><strong>#${movement.movement_id}</strong></td>
+                        <td>${movement.timestamp}</td>
+                        <td>${product ? product.name : 'Unknown'}</td>
+                        <td>${fromLoc ? fromLoc.name : '➖'}</td>
+                        <td>${toLoc ? toLoc.name : '➖'}</td>
+                        <td><strong>${movement.qty}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populateMovementForm() {
+            const productSelect = document.getElementById('movement_product');
+            const fromSelect = document.getElementById('movement_from');
+            const toSelect = document.getElementById('movement_to');
+            
+            productSelect.innerHTML = '<option value="">Select a product</option>' +
+                products.map(p => `<option value="${p.product_id}">${p.name} (${p.product_id})</option>`).join('');
+            
+            const locationOptions = locations.map(l => `<option value="${l.location_id}">${l.name} (${l.location_id})</option>`).join('');
+            
+            fromSelect.innerHTML = '<option value="">None (New Product)</option>' + locationOptions;
+            toSelect.innerHTML = '<option value="">None (Sold/Removed)</option>' + locationOptions;
+        }
+
+        function renderReport() {
+            const tbody = document.getElementById('report-table');
+            const balance = {};
+            
+            movements.forEach(movement => {
+                const productId = movement.product_id;
+                const qty = movement.qty;
+                
+                if (movement.from_location) {
+                    const key = `${productId}|${movement.from_location}`;
+                    balance[key] = (balance[key] || 0) - qty;
+                }
+                
+                if (movement.to_location) {
+                    const key = `${productId}|${movement.to_location}`;
+                    balance[key] = (balance[key] || 0) + qty;
+                }
+            });
+            
+            const reportData = [];
+            for (const [key, qty] of Object.entries(balance)) {
+                if (qty !== 0) {
+                    const [productId, locationId] = key.split('|');
+                    const product = products.find(p => p.product_id === productId);
+                    const location = locations.find(l => l.location_id === locationId);
+                    
+                    reportData.push({
+                        product_name: product ? product.name : 'Unknown',
+                        product_id: productId,
+                        location_name: location ? location.name : 'Unknown',
+                        location_id: locationId,
+                        qty: qty
+                    });
+                }
+            }
+            
+            reportData.sort((a, b) => a.product_name.localeCompare(b.product_name) || a.location_name.localeCompare(b.location_name));
+            
+            if (reportData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-state">No stock data available. Add some movements to see the balance report!</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = reportData.map(item => `
+                <tr>
+                    <td><strong>${item.product_name}</strong> <small>(${item.product_id})</small></td>
+                    <td><strong>${item.location_name}</strong> <small>(${item.location_id})</small></td>
+                    <td>
+                        <span class="badge ${item.qty > 0 ? 'badge-success' : 'badge-danger'}">
+                            ${item.qty > 0 ? '✓' : '✗'} ${item.qty}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        updateStats();
+        renderProducts();
+    </script>
+</body>
+</html>
